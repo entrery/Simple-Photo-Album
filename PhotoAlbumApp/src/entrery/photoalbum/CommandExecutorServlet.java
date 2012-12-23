@@ -33,7 +33,8 @@ public class CommandExecutorServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doPost(request, response);
 	}
-
+	
+	//Single point of action processing
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {	
 		Action action = Action.valueOf(request.getParameter("action"));
 		ICommand command = CommandFactory.getInstance().createCommand(action, request, response);
