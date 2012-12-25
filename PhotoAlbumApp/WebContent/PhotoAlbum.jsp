@@ -9,7 +9,17 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Photo album</title>
-<script type="text/javascript" src="resources/jquery/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="resources/jquery/jquery-1.7.2.js"></script>
+	<script src="resources/js/jquery-ui-1.8.18.custom.min.js"></script>
+	<script src="resources/js/jquery.smooth-scroll.min.js"></script>
+	<script src="resources/js/lightbox.js"></script>
+	<script src="resources/js/fly_btf.js"></script>
+
+	<link rel="stylesheet" href="resources/css/screen.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="resources/css/lightbox.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="resources/css/photos.css" type="text/css" media="screen" />
+
+
 <script type="text/javascript">
 
 
@@ -67,7 +77,13 @@ function createLinkChain() {
 	}
 }
 
-window.onload = createLinkChain;
+
+function start() {
+	createLinkChain();
+	init();
+};
+
+window.onload = start;
 
 </script>
 
@@ -91,31 +107,35 @@ window.onload = createLinkChain;
 		
 	<span id="categoryLinkChain"></span>
 			 
-	<table>
-		 <tr>
+	<ul class="polaroids" id="list">
+	
 	<% 
 		for (String folder : nestedCategories) {
 			String childCategoryPath = categoryPath + "@" + folder;
 			%>
-			<td>
-				<a href="PhotoAlbum.jsp?categoryPath=<%=childCategoryPath %>">
+			<li>
+				<a href="PhotoAlbum.jsp?categoryPath=<%=childCategoryPath %>" title="<%=folder%>">
 					<img id="<%=folder%>" draggable="true" ondragstart="drag(event)" src="CommandExecutorServlet/<%=childCategoryPath + ".jpg" + "?action=LOAD&forward=FALSE"%>">
 				</a>
-			</td>
+			</li>
 			<%
 		}
 				
 		for (String image : images) {
 			String imagePath = categoryPath + "@" + image;
-			%>
-			<td>
-				<img id="<%=image%>" draggable="true" ondragstart="drag(event)" onclick="selectPicture(this);"src="CommandExecutorServlet/<%=imagePath + "?action=LOAD&forward=FALSE"%>">  
-			</td>
+		 	%>
+			
+		
+		<li>
+			<a href="CommandExecutorServlet/<%=imagePath + "?action=LOAD&forward=FALSE"%>" rel="lightbox[user]" title="Roeland!">
+				<img id="<%=image%>" draggable="true" ondragstart="drag(event)" onclick="selectPicture(this);"src="CommandExecutorServlet/<%=imagePath + "?action=LOAD&forward=FALSE"%>">
+			</a>
+		</li>
+		
 			<%
 		}
 	%>
-		</tr> 
-	</table>		
+	</ul>		
 		
 	 <form action="CommandExecutorServlet" method="post" >
 		<input type="text" name="categoryName"/>

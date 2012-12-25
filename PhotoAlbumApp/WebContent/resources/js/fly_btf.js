@@ -13,8 +13,8 @@ var Tmax=10000;                        //MAX # OF MILLISECONDS BETWEEN PARAMETER
 //FLOATING IMAGE URLS FOR EACH IMAGE. ADD OR DELETE ENTRIES. KEEP ELEMENT NUMERICAL ORDER STARTING WITH "0" !!
 
 var floatimages=new Array();
-floatimages[0]='butterfly2.gif'; 
-floatimages[1]='btf2.gif';
+floatimages[0]='resources/images/butterfly2.gif'; 
+floatimages[1]='resources/images/btf2.gif';
 
 //*********DO NOT EDIT BELOW***********
 var NS4 = (navigator.appName.indexOf("Netscape")>=0 && parseFloat(navigator.appVersion) >= 4 && parseFloat(navigator.appVersion) < 5)? true : false;
