@@ -4,12 +4,14 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.List;
 
+import entrery.rushhour.ai.VehicleType;
+
 public class HorizontalVehicle extends Vehicle {
 	private int leftXBound;
 	private int rightXBound;
 	
-	public HorizontalVehicle(int x, int y, int w, int h, Color color) {
-		super(x, y, w, h, color);
+	public HorizontalVehicle(int x, int y, int w, int h, Color color, VehicleType type, boolean isRed, int index) {
+		super(x, y, w, h, color, type, isRed, index);
 	}
 
 	@Override
@@ -27,6 +29,14 @@ public class HorizontalVehicle extends Vehicle {
 		}
 	}
 
+	public int getLeftXBound() {
+		return leftXBound;
+	}
+
+	public int getRightXBound() {
+		return rightXBound;
+	}
+
 	@Override
 	public void doDrag(List<Vehicle> vehicles, Point point, int panelWidth, int panelHeight) {
 		setX(point.x - getDragFromX());
@@ -41,12 +51,11 @@ public class HorizontalVehicle extends Vehicle {
 		setDragFromX(dragPoint.x);
 		setDragFromY(dragPoint.y);
 		
-		leftXBound = findLeftXBound(vehicles);
-		rightXBound = findRightXBound(vehicles);		
+		calculateBounds(vehicles);
 	}
 
 	private int findRightXBound(List<Vehicle> vehicles) {
-		int maxXBound = Integer.MAX_VALUE;
+		int maxXBound = RushHourBoard.CELL_SIZE * RushHourBoard.COLUMNS;
 		for (Vehicle vehicle : vehicles) {
 			int leftX = vehicle.getX();
 			if(vehicle.contains(new Point(leftX + 1, getY())) && getX() < vehicle.getX() && this != vehicle) {
@@ -59,7 +68,7 @@ public class HorizontalVehicle extends Vehicle {
 	}
 
 	private int findLeftXBound(List<Vehicle> vehicles) {
-		int minXBound = Integer.MIN_VALUE;
+		int minXBound = 0;
 		for (Vehicle vehicle : vehicles) {
 			int rightX = vehicle.getX() + vehicle.getWidth();
 			if(vehicle.contains(new Point(rightX - 1, getY())) && getX() > vehicle.getX() && this != vehicle) {
@@ -69,5 +78,11 @@ public class HorizontalVehicle extends Vehicle {
 			}
 		}
 		return minXBound; 
+	}
+
+	@Override
+	public void calculateBounds(List<Vehicle> vehicles) {
+		leftXBound = findLeftXBound(vehicles);
+		rightXBound = findRightXBound(vehicles);	
 	}
 }

@@ -7,10 +7,13 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
 
+import entrery.rushhour.ai.VehicleType;
+
 public abstract class Vehicle {
 
 	protected static final int CELL_SIZE = 80;
 
+	private int index;
 	private int xPos;
 	private int yPos;
 	private int width;
@@ -18,16 +21,47 @@ public abstract class Vehicle {
 	private int dragFromX;
 	private int dragFromY;
 	Color color;
+	VehicleType type;
+	private boolean isRed;
 
-	Vehicle(int x, int y, int w, int h, Color color) {
+	public int getIndex() {
+		return this.index;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		Vehicle other = (Vehicle) obj;
+		
+        if (this == other) {
+            return true;
+        } else if (!(other instanceof Vehicle)) {
+            return false;
+        }
+        Vehicle otherVehicle = (Vehicle)other;
+        
+        return ((type == otherVehicle.type) &&
+                (xPos == otherVehicle.xPos) &&
+                (yPos == otherVehicle.yPos) &&
+                (width == other.width) &&
+                (height == other.height));
+	}
+	
+	Vehicle(int x, int y, int w, int h, Color color, VehicleType type, boolean isRed, int index) {
 		this.xPos = x;
 		this.yPos = y;
 		this.width = w;
 		this.height = h;
 		this.color = color;
+		this.type = type;
+		this.isRed = isRed;
+		this.index = index;
 	}
 
-	public void setX(int xPos) {
+	public VehicleType getVehicleType() {
+		return this.type;
+	}
+	
+	protected void setX(int xPos) {
 		this.xPos = xPos;
 	}
 
@@ -35,7 +69,7 @@ public abstract class Vehicle {
 		return xPos;
 	}
 
-	public void setY(int yPos) {
+	protected void setY(int yPos) {
 		this.yPos = yPos;
 	}
 
@@ -55,7 +89,7 @@ public abstract class Vehicle {
 		return dragFromX;
 	}
 
-	public void setDragFromX(int dragFromX) {
+	protected void setDragFromX(int dragFromX) {
 		this.dragFromX = dragFromX;
 	}
 
@@ -63,8 +97,16 @@ public abstract class Vehicle {
 		return dragFromY;
 	}
 
-	public void setDragFromY(int dragFromY) {
+	protected void setDragFromY(int dragFromY) {
 		this.dragFromY = dragFromY;
+	}
+	
+	public Color getColor() {
+		return color;
+	}
+
+	protected void setColor(Color color) {
+		this.color = color;
 	}
 
 	public boolean contains(Point p) {
@@ -81,6 +123,7 @@ public abstract class Vehicle {
 	public abstract void doDrag(List<Vehicle> vehicles, Point point, int panelWidth, int panelHeight);
 	public abstract void adjustDragPosition(List<Point> cells);
 	public abstract void doPress(Point dragPoint, List<Vehicle> vehicles);
+	public abstract void calculateBounds(List<Vehicle> vehicles);
 
 	protected Point belongsTo(List<Point> cells, int centerX, int centerY) {
 		Point rectangle = null;
@@ -99,5 +142,9 @@ public abstract class Vehicle {
 			return true;
 		}
 		return false;
+	}
+
+	public boolean isRed() {
+		return isRed;
 	}
 }

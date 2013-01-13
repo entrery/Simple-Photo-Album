@@ -1,36 +1,40 @@
 package entrery.rushhour;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.swing.*;
 
-public class RushHourBoard extends JPanel implements MouseListener, MouseMotionListener {
+import javax.swing.JPanel;
+
+import entrery.rushhour.ai.Move;
+import entrery.rushhour.ai.State;
+import entrery.rushhour.ai.VehicleMove;
+import entrery.rushhour.ai.VehicleType;
+
+public class RushHourBoard extends JPanel implements MouseListener, MouseMotionListener, State {
 
 	private static final long serialVersionUID = 1L;
-	private static final int CELL_SIZE = 80;
+	public static final int CELL_SIZE = 80;
 
-	private static final int ROWS = 6;
-	private static final int COLUMNS = 6;
-
-	private Vehicle one = new HorizontalVehicle(0, 0, 240, 80, Color.GREEN);
-	private Vehicle two = new HorizontalVehicle(160, 160, 240, 80, Color.GREEN);
-	private Vehicle three = new HorizontalVehicle(80, 400, 240, 80, Color.GREEN);
-	private Vehicle four = new HorizontalVehicle(320, 400, 160, 80, Color.YELLOW);
-	private Vehicle five = new VerticalVehicle(160, 240, 80, 160, Color.RED);
-	private Vehicle six = new VerticalVehicle(400, 80, 80, 240, Color.BLUE);
-	private Vehicle seven = new VerticalVehicle(320, 240, 80, 160, Color.BLUE);
-	private Vehicle eight = new VerticalVehicle(0, 320, 80, 160, Color.BLUE);
-
-	List<Vehicle> vehicles = Arrays.asList(one, two, three, four, five, six, seven, eight);
-	private Vehicle selectedVehicle;
+	public static final int ROWS = 6;
+	public static final int COLUMNS = 6;
 	
+	private List<Vehicle> vehicles;
+	private Vehicle selectedVehicle;
 	private boolean canDrag = false;
-	private List<Point> cells = new ArrayList<>();
+	private List<Point> cells = new ArrayList<Point>();
+	private boolean isGoal = false;
 
-	public RushHourBoard() {
+	public RushHourBoard(List<Vehicle> vehicles, boolean isGoal) {
+		this.vehicles = vehicles;
+		this.isGoal = isGoal;
 		setPreferredSize(new Dimension(481, 481));
 		setBackground(Color.GRAY);
 		addMouseListener(this);
@@ -113,5 +117,134 @@ public class RushHourBoard extends JPanel implements MouseListener, MouseMotionL
 
 	public void mouseMoved(MouseEvent e) {} 
 	public void mouseEntered(MouseEvent e) {}
-	public void mouseClicked(MouseEvent e) {} 
+	public void mouseClicked(MouseEvent e) {}
+
+	@Override
+	public List<Move> getMoves() {
+		List<Move> availableMovesForAllVehicles = new ArrayList<Move>();
+		
+		for(Vehicle vehicle : vehicles) {
+			addMovesForVehicle(vehicle, availableMovesForAllVehicles);
+		}
+		
+		return availableMovesForAllVehicles;
+	}
+
+	private void addMovesForVehicle(Vehicle vehicle, List<Move> moves) {
+		vehicle.calculateBounds(vehicles);
+		switch (vehicle.getVehicleType()) {
+		case Horizontal:
+			handleLeftMoves(vehicle, moves);
+			handleRightMoves(vehicle, moves);
+			break;
+		case Vertical:
+			handleUpMoves(vehicle, moves);
+			handleDownMoves(vehicle, moves);
+			break;
+		default:
+			break;
+		}
+	}
+
+	private void handleUpMoves(Vehicle vehicle, List<Move> moves) {
+		VerticalVehicle verticalVehicle = (VerticalVehicle) vehicle;
+		
+		int movesUp = (verticalVehicle.getY() - verticalVehicle.getUpperYBound()) / CELL_SIZE;
+
+		for (int i = 0; i < movesUp; i++) {
+			int upOffset = (i + 1) * CELL_SIZE;
+			VehicleMove move = new VehicleMove(vehicle.getX(), vehicle.getY() - upOffset, false, verticalVehicle);		
+			moves.add(move);
+		}
+	}
+
+	private void handleDownMoves(Vehicle vehicle, List<Move> moves) {
+		VerticalVehicle verticalVehicle = (VerticalVehicle) vehicle;
+		
+		int movesDown = (verticalVehicle.getDownYBound() - (verticalVehicle.getY() + vehicle.getHeight() )) / CELL_SIZE;
+
+		for (int i = 0; i < movesDown; i++) {
+			int upOffset = (i + 1) * CELL_SIZE;
+			VehicleMove move = new VehicleMove(vehicle.getX(), vehicle.getY() + upOffset, false, verticalVehicle);		
+			moves.add(move);
+		}	
+	}
+
+	private void handleRightMoves(Vehicle vehicle, List<Move> moves) {
+		HorizontalVehicle horizontalVehicle = (HorizontalVehicle) vehicle;
+		
+		int movesDown = (horizontalVehicle.getRightXBound() - (horizontalVehicle.getX() + vehicle.getWidth() )) / CELL_SIZE;
+
+		for (int i = 0; i < movesDown; i++) {
+			int upOffset = (i + 1) * CELL_SIZE;
+			VehicleMove move = new VehicleMove(vehicle.getX() + upOffset, vehicle.getY(), false, horizontalVehicle);		
+			moves.add(move);
+		}		
+	}
+
+	private void handleLeftMoves(Vehicle vehicle, List<Move> moves) {
+		HorizontalVehicle horizontalVehicle = (HorizontalVehicle) vehicle;
+		
+		int movesLeft = (horizontalVehicle.getX() - horizontalVehicle.getLeftXBound()) / CELL_SIZE;
+
+		for (int i = 0; i < movesLeft; i++) {
+			int leftOffset = (i + 1) * CELL_SIZE;
+			VehicleMove move = new VehicleMove(vehicle.getX() - leftOffset, vehicle.getY(), false, horizontalVehicle);		
+			moves.add(move);
+		}
+	}
+
+	@Override
+	public State applyMove(Move vehicleMove) {
+		VehicleMove move = (VehicleMove) vehicleMove;
+		Vehicle moved = move.getVehicle();
+		vehicles.remove(moved);
+				
+		Vehicle newVehicle = null;
+		if(moved.getVehicleType() == VehicleType.Vertical) {
+			newVehicle = new VerticalVehicle(move.getNewX(), move.getNewY(), moved.getWidth(), moved.getHeight(), moved.getColor(), moved.getVehicleType(), moved.isRed(), moved.getIndex());
+		} else {
+			newVehicle = new HorizontalVehicle(move.getNewX(), move.getNewY(), moved.getWidth(), moved.getHeight(), moved.getColor(), moved.getVehicleType(), moved.isRed(), moved.getIndex());
+		}
+	
+		vehicles.add(newVehicle);
+	
+		List<Vehicle> newVehicleList = new ArrayList<>(vehicles);
+		newVehicleList.remove(moved);
+		newVehicleList.add(newVehicle);
+		
+		return new RushHourBoard(newVehicleList, isGoalState(newVehicle));
+	}
+
+	private boolean isGoalState(Vehicle newVehicle) {
+		if(newVehicle.isRed()) {
+			if(newVehicle.getVehicleType().equals(VehicleType.Vertical)) {
+				return newVehicle.getY() == 0;
+			} else {
+				return newVehicle.getX() == COLUMNS * CELL_SIZE - 2 * CELL_SIZE;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isGoal() {
+		return isGoal;
+	} 
+	
+	public List<Vehicle> getVehicles() {
+		return vehicles;
+	}
+	
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        } else if (!(other instanceof RushHourBoard)) {
+            return false;
+        }
+        RushHourBoard otherBoard = (RushHourBoard)other;
+        
+        return Arrays.equals(vehicles.toArray(new Vehicle[0]), otherBoard.vehicles.toArray(new Vehicle[0]));
+    }
 }

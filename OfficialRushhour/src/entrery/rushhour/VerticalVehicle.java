@@ -4,12 +4,14 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.List;
 
+import entrery.rushhour.ai.VehicleType;
+
 public class VerticalVehicle extends Vehicle {
 	private int upperYBound;
 	private int downYBound;
 	
-	public VerticalVehicle(int x, int y, int w, int h, Color color) {
-		super(x, y, w, h, color);
+	public VerticalVehicle(int x, int y, int w, int h, Color color, VehicleType type, boolean isRed, int index) {
+		super(x, y, w, h, color, type, isRed, index);
 	}
 
 	public void adjustDragPosition(List<Point> cells) {
@@ -36,7 +38,7 @@ public class VerticalVehicle extends Vehicle {
 	}
 	
 	private int findUpperYBound(List<Vehicle> vehicles) { 
-		int minYBound = Integer.MIN_VALUE;
+		int minYBound = 0;
 		for (Vehicle vehicle : vehicles) {
 			int downLeftY = vehicle.getY() + vehicle.getHeight();
 			if(vehicle.contains(new Point(getX(), downLeftY - 1)) && getY() > vehicle.getY() && this != vehicle) {
@@ -49,7 +51,7 @@ public class VerticalVehicle extends Vehicle {
 	}
 	
 	private int findDownYBound(List<Vehicle> vehicles) {
-		int maxYBound = Integer.MAX_VALUE;
+		int maxYBound = RushHourBoard.CELL_SIZE * RushHourBoard.ROWS;
 		for (Vehicle vehicle : vehicles) {
 			int downLeftY = vehicle.getY();
 			if(vehicle.contains(new Point(getX(), downLeftY + 1)) && getY() < vehicle.getY() && this != vehicle) {
@@ -66,7 +68,19 @@ public class VerticalVehicle extends Vehicle {
 		setDragFromX(dragPoint.x);
 		setDragFromY(dragPoint.y);
 		
+		calculateBounds(vehicles);
+	}
+
+	public void calculateBounds(List<Vehicle> vehicles) {
 		downYBound = findDownYBound(vehicles);
 		upperYBound = findUpperYBound(vehicles);
+	}
+	
+	public int getUpperYBound() {
+		return upperYBound;
+	}
+
+	public int getDownYBound() {
+		return downYBound;
 	}
 }
