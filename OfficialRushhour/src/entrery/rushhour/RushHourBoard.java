@@ -9,6 +9,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -198,7 +200,7 @@ public class RushHourBoard extends JPanel implements MouseListener, MouseMotionL
 	public State applyMove(Move vehicleMove) {
 		VehicleMove move = (VehicleMove) vehicleMove;
 		Vehicle moved = move.getVehicle();
-		vehicles.remove(moved);
+		//vehicles.remove(moved);
 				
 		Vehicle newVehicle = null;
 		if(moved.getVehicleType() == VehicleType.Vertical) {
@@ -207,11 +209,19 @@ public class RushHourBoard extends JPanel implements MouseListener, MouseMotionL
 			newVehicle = new HorizontalVehicle(move.getNewX(), move.getNewY(), moved.getWidth(), moved.getHeight(), moved.getColor(), moved.getVehicleType(), moved.isRed(), moved.getIndex());
 		}
 	
-		vehicles.add(newVehicle);
+		//vehicles.add(newVehicle);
 	
 		List<Vehicle> newVehicleList = new ArrayList<>(vehicles);
 		newVehicleList.remove(moved);
 		newVehicleList.add(newVehicle);
+		
+		Collections.sort(newVehicleList, new Comparator<Vehicle>() {
+
+			@Override
+			public int compare(Vehicle o1, Vehicle o2) {
+				return o1.getIndex() < o2.getIndex() ? -1 : o1.getIndex() > o2.getIndex() ? 1 : 0;
+			}
+		});
 		
 		return new RushHourBoard(newVehicleList, isGoalState(newVehicle));
 	}

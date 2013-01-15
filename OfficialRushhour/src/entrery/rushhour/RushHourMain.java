@@ -61,22 +61,43 @@ public class RushHourMain {
 	}
 	
 	public static class ButtonListener implements ActionListener {
-		private State state;
+		private final State state;
 		
 		public ButtonListener(State state) {
 			this.state = state;
 		}
 		
 		@Override
-		public void actionPerformed(ActionEvent e) {
-			AStarSolutionFinder finder = new AStarSolutionFinder(new BlockingVehiclesHeuristic());
-			List<State> solutionStates = finder.solve(state);
-			
-			for (State state : solutionStates) {
-				RushHourBoard board = (RushHourBoard)state;
-				JPanel mainPanel = createMainPanel(board);
-				paintWindow(mainPanel);
-			}
+		public void actionPerformed(ActionEvent e) {			
+			new Thread() {
+				public void run() {
+					AStarSolutionFinder finder = new AStarSolutionFinder(new BlockingVehiclesHeuristic());
+					
+					long startTime = System.currentTimeMillis();
+					List<entrery.rushhour.ai.State> solutionStates = finder.solve(state);
+					long endTime = System.currentTimeMillis();
+					
+					System.out.println("Solution found for " + (endTime - startTime) / 1000 + " seconds");
+					for (final entrery.rushhour.ai.State state : solutionStates) {						
+						System.out.println(Thread.currentThread() + " First dump");
+						SwingUtilities.invokeLater(new Runnable() {						
+							@Override
+							public void run() {
+								RushHourBoard board = (RushHourBoard)state;
+								JPanel mainPanel = createMainPanel(board);
+								paintWindow(mainPanel);
+								System.out.println(Thread.currentThread());
+							}					
+						});		
+						
+						try {
+							Thread.sleep(1700L);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}						
+					}
+				}
+			}.start();		
 		}
 	}
 	
