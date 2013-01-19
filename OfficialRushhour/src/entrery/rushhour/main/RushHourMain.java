@@ -1,5 +1,6 @@
-package entrery.rushhour;
+package entrery.rushhour.main;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -7,11 +8,19 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
 
+import entrery.rushhour.HorizontalVehicle;
+import entrery.rushhour.RushHourBoard;
+import entrery.rushhour.Vehicle;
+import entrery.rushhour.VerticalVehicle;
 import entrery.rushhour.ai.AStarSolutionFinder;
 import entrery.rushhour.ai.State;
 import entrery.rushhour.ai.VehicleType;
@@ -73,10 +82,27 @@ public class RushHourMain {
 				public void run() {
 					AStarSolutionFinder finder = new AStarSolutionFinder(new BlockingVehiclesHeuristic());
 					
+					final WaitDialog waitDialog = new WaitDialog(window);					
+					
+					SwingUtilities.invokeLater(new Runnable() {						
+						@Override
+						public void run() {
+							waitDialog.setVisible(true);
+						}					
+					});		
+									
 					long startTime = System.currentTimeMillis();
 					List<entrery.rushhour.ai.State> solutionStates = finder.solve(state);
 					long endTime = System.currentTimeMillis();
 					
+					SwingUtilities.invokeLater(new Runnable() {						
+						@Override
+						public void run() {
+							waitDialog.setVisible(false);
+							waitDialog.dispose();
+						}					
+					});
+										
 					System.out.println("Solution found for " + (endTime - startTime) / 1000 + " seconds");
 					for (final entrery.rushhour.ai.State state : solutionStates) {						
 						System.out.println(Thread.currentThread() + " First dump");
@@ -114,5 +140,22 @@ public class RushHourMain {
 		arrayList.add(new VerticalVehicle(0, 320, 80, 160, Color.BLUE, VehicleType.Vertical, false, 8));
 
 		return arrayList;
+	}
+	
+	static class WaitDialog extends JDialog {
+		private static final long serialVersionUID = 1L;
+
+		public WaitDialog(JFrame parent) {
+			super(parent, "Operation in progress", true);
+			JProgressBar progressBar = new JProgressBar();
+			progressBar.setSize(250, 20);
+			progressBar.setIndeterminate(true);
+			Border border = BorderFactory.createTitledBorder("Calculating...");
+			progressBar.setBorder(border);
+			getContentPane().add(progressBar, BorderLayout.CENTER);
+			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+			setLocation(570, 230);
+			setSize(250, 80);
+		}
 	}
 }
