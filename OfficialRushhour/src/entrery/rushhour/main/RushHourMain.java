@@ -5,11 +5,18 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -29,8 +36,16 @@ import entrery.rushhour.heuristics.BlockingVehiclesHeuristic;
 public class RushHourMain {
 
 	private static JFrame window;
+	private static int selectionIndex = -1;
 	
 	public static void main(String[] args) {
+		try {
+		    System.setOut(new PrintStream(new File("C:\\Users\\EnTrERy\\Desktop\\rushLog.txt")));
+		} catch (Exception e) {
+		     e.printStackTrace();
+		}
+		
+		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				createAndShowGUI();
@@ -48,6 +63,7 @@ public class RushHourMain {
 	
 	@SuppressWarnings("deprecation")
 	public static void paintWindow(JPanel mainPanel) {
+		window.getContentPane().removeAll();
 		window.setContentPane(mainPanel);
 		window.pack();
 		window.show();
@@ -59,9 +75,37 @@ public class RushHourMain {
 		JPanel mainPanel = new JPanel();
 		mainPanel.add(board);
 		mainPanel.add(createButton(board));
+		mainPanel.add(createComboBox());
+		
 		return mainPanel;
 	}
 
+	private static Component createComboBox() {
+		JComboBox<String> combo = new JComboBox<String>();
+		
+		combo.addItem("config1");
+		combo.addItem("config2");
+		combo.setSelectedIndex(selectionIndex);
+		
+		combo.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				@SuppressWarnings("rawtypes")
+				JComboBox jComboBox = (JComboBox)event.getSource();
+				String fileName = (String) jComboBox.getSelectedItem();
+				selectionIndex = jComboBox.getSelectedIndex();
+				
+				RushHourBoard board = new RushHourBoard(createVehicles(fileName), false);
+				JPanel mainPanel = createMainPanel(board);
+				paintWindow(mainPanel);
+			}
+		});
+		
+		
+		return combo;
+	}
+	
 	private static Component createButton(State state) {
 		JButton button = new JButton("Solve");
 		button.addActionListener(new ButtonListener(state));
@@ -112,7 +156,6 @@ public class RushHourMain {
 								RushHourBoard board = (RushHourBoard)state;
 								JPanel mainPanel = createMainPanel(board);
 								paintWindow(mainPanel);
-								System.out.println(Thread.currentThread());
 							}					
 						});		
 						
@@ -140,6 +183,56 @@ public class RushHourMain {
 		arrayList.add(new VerticalVehicle(0, 320, 80, 160, Color.BLUE, VehicleType.Vertical, false, 8));
 
 		return arrayList;
+	}
+	
+	private static List<Vehicle> createVehicles(String fileName) {
+		List<Vehicle> arrayList = new ArrayList<Vehicle>();
+
+		try {
+		  FileInputStream fstream = new FileInputStream("resources/" + fileName + ".txt");
+		  DataInputStream in = new DataInputStream(fstream);
+		  BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		  String strLine;
+		  String array[] = null;
+		  while ((strLine = br.readLine()) != null)   {
+			  array = strLine.split(",");
+			  int x = Integer.parseInt(array[0]) * RushHourBoard.CELL_SIZE;
+			  int y = Integer.parseInt(array[1])* RushHourBoard.CELL_SIZE;
+			  int w = Integer.parseInt(array[2])* RushHourBoard.CELL_SIZE;
+			  int h = Integer.parseInt(array[3])* RushHourBoard.CELL_SIZE;
+			  Color color = colorConverter(array[4]);
+			  VehicleType type = VehicleType.valueOf(array[5]);
+			  boolean isRed = Boolean.valueOf(array[6]);
+			  int index = Integer.parseInt(array[7]);
+
+			  if(type.equals(VehicleType.Vertical)) {
+				  arrayList.add(new VerticalVehicle(x, y, w, h, color, type, isRed, index));
+			  } else {
+				  arrayList.add(new HorizontalVehicle(x, y, w, h, color, type, isRed, index));
+			  }
+		}
+	
+		  br.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		return arrayList;
+	}
+	
+	
+	private static Color colorConverter(String color) {
+		if(color.equals("red")) {
+			return Color.RED;
+		} else if (color.equals("blue")) {
+			return Color.BLUE;
+		} else if (color.equals("pink")) {
+			return Color.PINK;
+		} else if (color.equals("yellow")) {
+			return Color.YELLOW;
+		} else if(color.equals("green")) {
+			return Color.GREEN;
+		} else return Color.BLACK;
 	}
 	
 	static class WaitDialog extends JDialog {

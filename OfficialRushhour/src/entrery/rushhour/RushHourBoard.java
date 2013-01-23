@@ -246,6 +246,44 @@ public class RushHourBoard extends JPanel implements MouseListener, MouseMotionL
 		return vehicles;
 	}
 	
+	
+	public void printMatrix() {
+		char[][] matrix = new char[6][6];
+		
+		for (int i = 0; i < matrix.length; i++) {
+			for (int j = 0; j < matrix.length; j++) {
+				matrix[i][j] = 'O';
+			}
+		}
+		
+		for (Vehicle vehicle : vehicles) {
+				for (int i = 0; i < vehicle.getWidth() / CELL_SIZE ; i++) {
+					matrix[(vehicle.getX() / CELL_SIZE) + i][vehicle.getY() / CELL_SIZE] = getSymbol(vehicle.isRed(), vehicle.getVehicleType());
+				}
+				for (int i = 0; i < vehicle.getHeight() / CELL_SIZE ; i++) {
+					matrix[(vehicle.getX() / CELL_SIZE)][(vehicle.getY() / CELL_SIZE) + i] = getSymbol(vehicle.isRed(), vehicle.getVehicleType());
+				}
+		}
+		
+		for (int i = 0; i < matrix.length; i++) {
+			for (int j = 0; j < matrix.length; j++) {
+				System.out.print(matrix[j][i]);
+			}
+			System.out.println();
+		}
+		System.out.println();
+	}
+	
+	private static char getSymbol(boolean isRed, VehicleType type) {
+		if(isRed) {
+			return 'R';
+		} else if(type.equals(VehicleType.Vertical)) {
+			return 'V';
+		} else {
+			return 'H';
+		}
+	}
+	
     @Override
     public boolean equals(Object other) {
         if (this == other) {
@@ -256,5 +294,12 @@ public class RushHourBoard extends JPanel implements MouseListener, MouseMotionL
         RushHourBoard otherBoard = (RushHourBoard)other;
         
         return Arrays.equals(vehicles.toArray(new Vehicle[0]), otherBoard.vehicles.toArray(new Vehicle[0]));
+//        for (int i = 0; i < vehicles.size(); i++) {
+//			if(!vehicles.get(i).equals(otherBoard.vehicles.get(i))) {
+//				return false;
+//			}
+//		}
+//        
+//        return true;
     }
 }

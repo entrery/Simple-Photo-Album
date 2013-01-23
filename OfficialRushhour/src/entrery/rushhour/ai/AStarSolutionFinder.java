@@ -2,10 +2,10 @@ package entrery.rushhour.ai;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
-import java.util.Set;
+
+import entrery.rushhour.RushHourBoard;
 
 public class AStarSolutionFinder {
 	
@@ -21,7 +21,7 @@ public class AStarSolutionFinder {
         	return Collections.emptyList();
         }
 
-        Set<AStarState> closed = new HashSet<>();
+        List<AStarState> closed = new ArrayList<>();
         PriorityQueue<AStarState> prioQueue = new PriorityQueue<AStarState>();
 
         AStarState startState = new AStarState(state);
@@ -34,9 +34,20 @@ public class AStarSolutionFinder {
         prioQueue.add(startState);
         
         while (!prioQueue.isEmpty()) {
-         
         	AStarState bestAStarState = prioQueue.poll();
+        	System.out.println("Closed size " + closed.size());
+        	
+        	if(closed.size() == 31) {
+        		System.out.println("stop it");
+        		System.out.println(closed.contains(bestAStarState));
+        		
+        		AStarState firstState = closed.get(0);
+        		
+        		firstState.equals(bestAStarState);
+        	}
+        	
             if(closed.contains(bestAStarState)) {
+            	System.out.println("Once");
             	continue;
             }
             
@@ -44,6 +55,8 @@ public class AStarSolutionFinder {
             if (bestState.isGoal()) {
             	return reconstructSolution(bestAStarState);
             }
+            
+            ((RushHourBoard) bestState).printMatrix();
             
             closed.add(bestAStarState);
             

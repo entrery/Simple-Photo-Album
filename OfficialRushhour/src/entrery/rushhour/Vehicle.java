@@ -37,11 +37,10 @@ public abstract class Vehicle {
         } else if (!(other instanceof Vehicle)) {
             return false;
         }
-        Vehicle otherVehicle = (Vehicle)other;
         
-        return ((type == otherVehicle.type) &&
-                (xPos == otherVehicle.xPos) &&
-                (yPos == otherVehicle.yPos) &&
+        return ((type == other.type) &&
+                (xPos == other.xPos) &&
+                (yPos == other.yPos) &&
                 (width == other.width) &&
                 (height == other.height));
 	}
