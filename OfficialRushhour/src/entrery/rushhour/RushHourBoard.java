@@ -19,6 +19,7 @@ import entrery.rushhour.ai.Move;
 import entrery.rushhour.ai.State;
 import entrery.rushhour.ai.VehicleMove;
 import entrery.rushhour.ai.VehicleType;
+import entrery.rushhour.main.RushHourMain;
 
 public class RushHourBoard extends JPanel implements MouseListener, MouseMotionListener, State {
 
@@ -72,6 +73,8 @@ public class RushHourBoard extends JPanel implements MouseListener, MouseMotionL
 	}
 
 	public void mousePressed(MouseEvent e) {
+		RushHourMain.hideButtons();
+		
 		int x = e.getX(); 
 		int y = e.getY();
 
