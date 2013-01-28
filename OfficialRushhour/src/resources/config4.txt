@@ -1,0 +1,11 @@
+0,0,2,1,blue,Horizontal,false,1
+2,0,2,1,yellow,Horizontal,false,2
+4,0,1,2,pink,Vertical,false,3
+5,0,1,3,green,Vertical,false,4
+0,1,1,2,blue,Vertical,false,5
+2,1,2,1,yellow,Horizontal,false,6
+1,2,1,2,pink,Vertical,false,7
+3,2,2,1,red,Horizontal,true,8
+2,2,1,3,blue,Vertical,false,9
+3,3,3,1,yellow,Horizontal,false,10
+0,5,2,1,green,Horizontal,false,11
