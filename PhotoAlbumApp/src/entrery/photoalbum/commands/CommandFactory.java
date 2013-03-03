@@ -3,6 +3,8 @@ package entrery.photoalbum.commands;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import entrery.photoalbum.resource.load.ResourceController;
+
 public class CommandFactory {
 	
 	private static CommandFactory INSTANCE;
@@ -21,16 +23,16 @@ public class CommandFactory {
 		ICommand command;
 		switch (action) {
 		case LOAD:
-			command = new RetrieveImageCommand(request, response);
+			command = new RetrieveImageCommand(request, response, new ResourceController());
 			break;
 		case UPLOAD:
-			command = new UploadCommand(request);
+			command = new UploadCommand(request, new ResourceController());
 			break;
 		case CREATE:
-			command = new CreateDirectoryCommand(request);
+			command = new CreateDirectoryCommand(request, new ResourceController());
 			break;
 		case DELETE:
-			command = new DeleteCommand(request);
+			command = new DeleteCommand(request, new ResourceController());
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown command");

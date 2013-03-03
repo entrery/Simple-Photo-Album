@@ -4,16 +4,19 @@ import java.io.InputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import entrery.photoalbum.resource.api.IResourceController;
+import entrery.photoalbum.resource.load.FileUtil;
 import entrery.photoalbum.resource.load.ImageDAO;
 import entrery.photoalbum.resource.load.ImageUtil;
-import entrery.photoalbum.resource.load.ResourceController;
 
 public class CreateDirectoryCommand implements ICommand {
 	
 	private HttpServletRequest request;
+	private IResourceController resourceController;
 	
-	public CreateDirectoryCommand(HttpServletRequest request) {
+	public CreateDirectoryCommand(HttpServletRequest request, IResourceController resourceController) {
 		this.request = request;
+		this.resourceController = resourceController;
 	}
 	
 	@Override
@@ -35,8 +38,12 @@ public class CreateDirectoryCommand implements ICommand {
 	private void createCategory(String categoryPath, String newCategoryName) {
 		try {
 			InputStream defaultFolderImageToStream = ImageUtil.getDefaultFolderImageAsStream();
-			ResourceController.createDirectory(newCategoryName, categoryPath);
-			ResourceController.createDirectoryImage(defaultFolderImageToStream, categoryPath, newCategoryName);  
+			
+			String pathToCreateDir = FileUtil.generateCategoryPath(categoryPath, newCategoryName, false);
+			String pathToSafeCategoryImage = FileUtil.generateCategoryPath(categoryPath, newCategoryName, true);
+			
+			resourceController.createDirectory(pathToCreateDir);
+			resourceController.createImage(defaultFolderImageToStream, pathToSafeCategoryImage);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

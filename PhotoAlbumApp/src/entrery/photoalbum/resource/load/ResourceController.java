@@ -3,7 +3,6 @@ package entrery.photoalbum.resource.load;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,49 +12,43 @@ import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 
-public class ResourceController {
+import entrery.photoalbum.resource.api.IResourceController;
+
+//This controller should not know how to convert from url to real file path. It should only be able to write and read images from/to the file system
+
+public class ResourceController implements IResourceController {
 	
-	private static final String FILE_PATH = "C:\\Users\\EnTrERy\\Desktop\\My Pictures\\";
-	
-	public static InputStream getImage(String imageId, String mimeType) {
-		String imageFilePath = convertToFilePath(imageId);
-		InputStream imageInputStream = null;
+	public byte[] loadImage(String imageFilePath, String mimeType) {
+		ByteArrayOutputStream os = null;
 		try {
-			BufferedImage img = ImageIO.read(new File(FILE_PATH + imageFilePath));
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			BufferedImage img = ImageIO.read(new File(imageFilePath));
+			os = new ByteArrayOutputStream();
 			ImageIO.write(img, mimeType, os); 
-			imageInputStream = new ByteArrayInputStream(os.toByteArray());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		return imageInputStream;
+		return os.toByteArray();
 	}
-	
-	public static void persistImage(InputStream imageInputStream, String categoryPath, String imageId) throws IOException {
-		 String pathToSafe = FILE_PATH + convertToFilePath(categoryPath + "@" + imageId);
+
+	public void createImage(InputStream imageInputStream, String pathToSafe) throws IOException {
 		 BufferedOutputStream imageOutputStream = new BufferedOutputStream(new FileOutputStream(new File(pathToSafe)));
 		 writeToOutputStream(imageInputStream, imageOutputStream); 
 	}
-
-	public static void createDirectoryImage(InputStream defaultFolderImageInputStream, String categoryPath, String categoryName) throws IOException {
-		String toConvert = "";
-		if ( categoryPath == null || categoryPath.equals("")) {
-			toConvert =  categoryName + ".jpg";
-		} else {
-			toConvert = categoryPath + "@" + categoryName + ".jpg";
-		}
-		
-		String pathToSafe = FILE_PATH + convertToFilePath(toConvert);
-		 FileOutputStream fos = new FileOutputStream(new File(pathToSafe));
-		 BufferedOutputStream bos = new BufferedOutputStream(fos);
-		 writeToOutputStream(defaultFolderImageInputStream, bos);
-	}
 	
-	public static void writeToOutputStream(InputStream inputStream, OutputStream outputStream) throws IOException {
+	public void createDirectory(String newCategoryFilePath) {
+		File file = new File(newCategoryFilePath);
+		file.mkdir();
+	} 
+	
+	public void deleteArtifact(String filePath) {
+		deleteFile(new File(filePath));
+	}
+
+	private void writeToOutputStream(InputStream inputStream, OutputStream outputStream) throws IOException {
 		BufferedInputStream input = null;
 		BufferedOutputStream output = null;
-
+	
 		try {
 		    input = new BufferedInputStream(inputStream);
 		    output = new BufferedOutputStream(outputStream);
@@ -70,31 +63,8 @@ public class ResourceController {
 		    if (input != null) try { input.close(); } catch (IOException logOrIgnore) {}
 		}
 	}
-	
-	public static void createDirectory(String categoryName, String categoryPath) {
-		String toConvert = "";
-		if (categoryPath == null || categoryPath.equals("")) {
-			toConvert = categoryName;
-		} else {
-			toConvert = categoryPath + "@" + categoryName;
-		}
-		
-		 String newCategoryPath = FILE_PATH + convertToFilePath(toConvert);
-		 File file = new File(newCategoryPath);
-		 file.mkdir();
-	} 
-	
-	public static void removeArtifact(String fullArtifactPath, String artifactId) {
-		String filePath = FILE_PATH + convertToFilePath(fullArtifactPath + "@" + artifactId);
-	
-		if(!isImage(artifactId)) {
-			removeArtifact(fullArtifactPath, artifactId + ".jpg");
-		}
-		
-		deleteFile(new File(filePath));
-	}
 
-	private static void deleteFile(File fileToDelete) {
+	private void deleteFile(File fileToDelete) {
 		File[] files = fileToDelete.listFiles();
 		if (files != null) {
 			for (File file : files) {
@@ -109,18 +79,4 @@ public class ResourceController {
 		fileToDelete.delete();
 		new ImageDAO().deleteArtifactFromImageMetadata(fileToDelete.getName());
 	}
-	
-	private static boolean isImage(String artifactId) {
-		return artifactId.contains(".jpg") || artifactId.contains(".png");
-	}
-
-	private static String convertToFilePath(String path) {
-		String[] pathParts = path.split("@");
-		String result = "";
-		for (String pathPart : pathParts) {
-			result += "\\" + pathPart;
-		}
-		return result;
-	}
-	
 }

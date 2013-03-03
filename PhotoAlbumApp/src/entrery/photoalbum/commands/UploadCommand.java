@@ -13,16 +13,19 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.eaio.uuid.UUID;
 
+import entrery.photoalbum.resource.api.IResourceController;
+import entrery.photoalbum.resource.load.FileUtil;
 import entrery.photoalbum.resource.load.ImageDAO;
 import entrery.photoalbum.resource.load.ImageUtil;
-import entrery.photoalbum.resource.load.ResourceController;
 
 public class UploadCommand implements ICommand {
 
 	private HttpServletRequest request;
+	private IResourceController resourceController;
 	
-	public UploadCommand(HttpServletRequest request) {
+	public UploadCommand(HttpServletRequest request, IResourceController resourceController) {
 		this.request = request;
+		this.resourceController = resourceController;
 	}
 	
 	@Override
@@ -73,7 +76,8 @@ public class UploadCommand implements ICommand {
 	private void saveImage(FileItem imageItem, String categoryPath, String imageId) {
 		try {
 			InputStream imageInputStream = imageItem.getInputStream(); 
-			ResourceController.persistImage(imageInputStream, categoryPath, imageId);
+			String imageFilePath = FileUtil.generateFilePath(categoryPath, imageId);
+			resourceController.createImage(imageInputStream, imageFilePath);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
