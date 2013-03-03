@@ -9,6 +9,9 @@ public class ImageUtil {
 	private static ServletContext servletContext;
 	
 	public static String getLastCategory(String categoryPath) {
+		if(categoryPath == null) {
+			return "";
+		}
 		return categoryPath.substring(categoryPath.lastIndexOf("@") + 1); 
 	}
 	

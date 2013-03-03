@@ -8,15 +8,18 @@
     <welcome-file>default.html</welcome-file>
     <welcome-file>default.htm</welcome-file>
     <welcome-file>default.jsp</welcome-file>
+    <welcome-file>loginPage.jsp</welcome-file>
   </welcome-file-list>
-  <servlet>
-    <description></description>
-    <display-name>DirectoryCreatorServlet</display-name>
-    <servlet-name>DirectoryCreatorServlet</servlet-name>
-    <servlet-class>entrery.photoalbum.UploadServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>DirectoryCreatorServlet</servlet-name>
-    <url-pattern>/DirectoryCreatorServlet</url-pattern>
-  </servlet-mapping>
+  <filter>
+    <filter-name>LoginFilter</filter-name>
+    <filter-class>entrery.photoalbum.filters.LoginFilter</filter-class>
+    <init-param>
+      <param-name>avoid</param-name>
+      <param-value>/loginPage.jsp,/LoginServlet,/RegisterServlet,/registerPage.jsp,/loginError.jsp,/resources/css/photos.css,/resources/images/grass.jpg</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>LoginFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 </web-app>

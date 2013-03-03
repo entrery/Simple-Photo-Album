@@ -15,7 +15,7 @@ import javax.imageio.ImageIO;
 
 public class ResourceController {
 	
-	private static final String FILE_PATH = "C:\\Users\\EnTrERy\\Desktop\\";
+	private static final String FILE_PATH = "C:\\Users\\EnTrERy\\Desktop\\My Pictures\\";
 	
 	public static InputStream getImage(String imageId, String mimeType) {
 		String imageFilePath = convertToFilePath(imageId);
@@ -39,7 +39,14 @@ public class ResourceController {
 	}
 
 	public static void createDirectoryImage(InputStream defaultFolderImageInputStream, String categoryPath, String categoryName) throws IOException {
-		 String pathToSafe = FILE_PATH + convertToFilePath(categoryPath + "@" + categoryName + ".jpg");
+		String toConvert = "";
+		if ( categoryPath == null || categoryPath.equals("")) {
+			toConvert =  categoryName + ".jpg";
+		} else {
+			toConvert = categoryPath + "@" + categoryName + ".jpg";
+		}
+		
+		String pathToSafe = FILE_PATH + convertToFilePath(toConvert);
 		 FileOutputStream fos = new FileOutputStream(new File(pathToSafe));
 		 BufferedOutputStream bos = new BufferedOutputStream(fos);
 		 writeToOutputStream(defaultFolderImageInputStream, bos);
@@ -65,7 +72,14 @@ public class ResourceController {
 	}
 	
 	public static void createDirectory(String categoryName, String categoryPath) {
-		 String newCategoryPath = FILE_PATH + convertToFilePath(categoryPath + "@" + categoryName);
+		String toConvert = "";
+		if (categoryPath == null || categoryPath.equals("")) {
+			toConvert = categoryName;
+		} else {
+			toConvert = categoryPath + "@" + categoryName;
+		}
+		
+		 String newCategoryPath = FILE_PATH + convertToFilePath(toConvert);
 		 File file = new File(newCategoryPath);
 		 file.mkdir();
 	} 

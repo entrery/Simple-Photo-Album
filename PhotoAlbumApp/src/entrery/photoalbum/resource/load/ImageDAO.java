@@ -117,6 +117,46 @@ public class ImageDAO {
 		
 		return imageNames;
 	}
+	
+	public String getUser(String username, String password) {
+		String selectSql = "SELECT \"USER_NAME\" FROM \"USERS\" WHERE \"USER_NAME\"='" + username + "' AND \"PASSWORD\"='" + password +"'";
+		String user = null;
+		
+		try {
+			connection = getConnection();
+			statement = connection.prepareStatement(selectSql);
+			resultSet = statement.executeQuery();
+			
+			if(resultSet.next()) {
+				user = resultSet.getString("USER_NAME");
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return user;
+	}
+	
+	public String getUser(String username) {
+		String selectSql = "SELECT \"USER_NAME\" FROM \"USERS\" WHERE \"USER_NAME\"='" + username + "'";
+		String user = null;
+		
+		try {
+			connection = getConnection();
+			statement = connection.prepareStatement(selectSql);
+			resultSet = statement.executeQuery();
+			
+			if(resultSet.next()) {
+				user = resultSet.getString("USER_NAME");
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return user;
+	}
 
 	private void closeAll() {
 		try {
@@ -134,5 +174,19 @@ public class ImageDAO {
 	
 	private Connection getConnection() throws Exception {
 			return  ConnectionProvider.getConnection();
+	}
+	
+	
+
+	public void registerUser(String userName, String userPass, String name, String email) {
+		String insertSQL = "INSERT INTO \"USERS\" VALUES ('" + userName + "','" + userPass + "','" + name + "','" + email + "')";
+		
+		try {
+			connection = getConnection();
+			statement = connection.prepareStatement(insertSQL);
+			statement.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

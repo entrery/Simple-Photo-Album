@@ -35,6 +35,8 @@ import entrery.rushhour.ai.AStarSolutionFinder;
 import entrery.rushhour.ai.State;
 import entrery.rushhour.ai.VehicleType;
 import entrery.rushhour.heuristics.BlockingVehiclesHeuristic;
+import entrery.rushhour.heuristics.EuclideHeuristic;
+import entrery.rushhour.heuristics.NullHeuristics;
 
 public class RushHourMain {
 
@@ -211,7 +213,9 @@ public class RushHourMain {
 		public void actionPerformed(ActionEvent e) {			
 			new Thread() {
 				public void run() {
-					AStarSolutionFinder finder = new AStarSolutionFinder(new BlockingVehiclesHeuristic());
+//					AStarSolutionFinder finder = new AStarSolutionFinder(new BlockingVehiclesHeuristic());
+//					AStarSolutionFinder finder = new AStarSolutionFinder(new NullHeuristics());
+					AStarSolutionFinder finder = new AStarSolutionFinder(new EuclideHeuristic());
 					
 					final WaitDialog waitDialog = new WaitDialog(window);					
 					

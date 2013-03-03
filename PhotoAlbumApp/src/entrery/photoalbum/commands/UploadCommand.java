@@ -64,9 +64,10 @@ public class UploadCommand implements ICommand {
 	}
 
 	private void insertIntoMeasureMetadata(String categoryPath, String imageId) {
+		String user = (String)request.getSession().getAttribute("user");
 		String imageCategory = ImageUtil.getLastCategory(categoryPath);
 		ImageDAO imageDAO = new ImageDAO();
-		imageDAO.insertIntoImageMetadata(imageId, imageCategory, null, "Entrery", 0);
+		imageDAO.insertIntoImageMetadata(imageId, imageCategory, null, user, 0);
 	}
 
 	private void saveImage(FileItem imageItem, String categoryPath, String imageId) {
