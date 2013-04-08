@@ -22,6 +22,7 @@ public class CommandExecutorServlet extends HttpServlet {
 
     public CommandExecutorServlet() {
         super();
+        System.out.println("Hello world!");
     }
  
     @Override
