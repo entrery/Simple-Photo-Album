@@ -22,13 +22,14 @@ public class CommandExecutorServlet extends HttpServlet {
 
     public CommandExecutorServlet() {
         super();
+        System.out.println("Hello world!");
     }
  
     @Override
     public void init() throws ServletException {
     	super.init();
        	ImageUtil.registerServletContext(getServletContext());
-    };        
+    };
     
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doPost(request, response);
