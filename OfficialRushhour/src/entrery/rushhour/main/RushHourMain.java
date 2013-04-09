@@ -46,6 +46,9 @@ public class RushHourMain {
 	private static JButton nextButton;
 	private static JButton showButton;
 	
+	
+	
+	
 	public static void main(String[] args) {
 		try {
 		    System.setOut(new PrintStream(new File("C:\\Users\\EnTrERy\\Desktop\\rushLog.txt")));
