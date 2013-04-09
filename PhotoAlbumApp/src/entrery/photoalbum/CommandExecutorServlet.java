@@ -41,6 +41,7 @@ public class CommandExecutorServlet extends HttpServlet {
 		ICommand command = CommandFactory.getInstance().createCommand(action, request, response);
 		command.execute();
 		
+		//comment
 		if(shouldForwardToMainPage(request)) { 
 			forwardToMainPage(request, response);
 		}			
