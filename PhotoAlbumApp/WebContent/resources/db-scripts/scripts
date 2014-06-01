@@ -1,0 +1,5 @@
+connect 'jdbc:derby://localhost/C:/Users/EnTrERy/Desktop/db-derby-10.9.1.0-bin/photo_album_db/photo;create=true';
+
+create table USERS (USER_NAME varchar(150), PASSWORD varchar(150), REAL_NAME varchar(200), EMAIL varchar(150));
+
+create table IMAGE_METADATA (USER_NAME varchar(150), CATEGORY varchar(150), MIME_TYPE varchar(10), ARTIFACT_NAME varchar(150), DIRECTORY int);
