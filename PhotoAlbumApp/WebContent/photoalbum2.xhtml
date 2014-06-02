@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3c.org/1999/xhtml"
+xmlns:h="http://xmlns.jcp.org/jsf/html"
+xmlns:p="http://primefaces.org/ui">
+ <h:head></h:head>
+ <h:body>
+<p:galleria value="#{imagesView2.images}" var="image" panelWidth="500" panelHeight="313" showCaption="true">
+    <p:graphicImage name="#{image}" alt="Image Description for #{image}" title="#{image}"/>
+</p:galleria>
+ </h:body>
+</html>
+

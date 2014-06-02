@@ -34,7 +34,7 @@ public class LoginServlet extends HttpServlet {
 			HttpSession session = request.getSession(true);
 			session.setAttribute("user", userName);
 			
-			forward("/PhotoAlbum.jsp?categoryPath=" + userName, request, response);
+			forward("/photoalbum.jsf?categoryPath=" + userName, request, response);
 		} else {
 			
 			forward("/loginPage.jsp?error=true", request, response);

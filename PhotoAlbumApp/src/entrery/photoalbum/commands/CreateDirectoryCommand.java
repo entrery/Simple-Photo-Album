@@ -29,7 +29,8 @@ public class CreateDirectoryCommand implements ICommand {
 	}
 	
 	private void insertIntoImageMetadata(String categoryPath, String newCategoryName) {
-		String user = (String)request.getSession().getAttribute("user");
+		//String user = (String)request.getSession().getAttribute("user");
+		String user = "sasho";
 		String parentCategory = ImageUtil.getLastCategory(categoryPath);
 		ImageDAO imageDAO = new ImageDAO();
 		imageDAO.insertIntoImageMetadata(newCategoryName, parentCategory, "jpg", user, 1);

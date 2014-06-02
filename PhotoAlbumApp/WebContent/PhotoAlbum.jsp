@@ -123,17 +123,17 @@ function drop(event) {
 	
 	<%  
 		String categoryPath = request.getParameter("categoryPath");
-		String user = (String)request.getSession().getAttribute("user");
-	
+		//String user = (String)request.getSession().getAttribute("user");
+		String user = "sasho";
 	
 		if(categoryPath == null || categoryPath.equals("null")) {
 			categoryPath = user; 
 		}
 		
-		if(!categoryPath.contains(user)) {
-			request.getSession().invalidate();
-			getServletContext().getRequestDispatcher("/LogoutServlet").forward(request, response);
-		}
+// 		if(!categoryPath.contains(user)) {
+// 			request.getSession().invalidate();
+// 			getServletContext().getRequestDispatcher("/LogoutServlet").forward(request, response);
+// 		}
 
 		String requestedCategory = ImageUtil.getLastCategory(categoryPath);
 		

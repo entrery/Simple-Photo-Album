@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class ConnectionProvider {
 
-	private static final String DB_LOCATION = "jdbc:derby://localhost/D:/ALL MY STUFF/Desktop 14.12.2012/derbyDBs/db";
+	private static final String DB_LOCATION = "jdbc:derby://localhost/C:/Users/EnTrERy/Desktop/db-derby-10.9.1.0-bin/photo_album_db/photo";
 
 	public static Connection getConnection() throws Exception  {
 		Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
