@@ -11,27 +11,30 @@
     <welcome-file>loginPage.jsp</welcome-file>
   </welcome-file-list>
   
+
+  
+  
   <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
-
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.jsf</url-pattern>
     </servlet-mapping>
+    
+  <filter>
+    <filter-name>LoginFilter</filter-name>
+    <filter-class>entrery.photoalbum.filters.LoginFilter</filter-class>
+    <init-param>
+      <param-name>avoid</param-name>
+      <param-value>/loginPage.jsp,/LoginServlet,/RegisterServlet,/registerPage.jsp,/loginError.jsp,/resources/css/photos.css,/resources/images/grass.jpg</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>LoginFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
   
-<!--   <filter> -->
-<!--     <filter-name>LoginFilter</filter-name> -->
-<!--     <filter-class>entrery.photoalbum.filters.LoginFilter</filter-class> -->
-<!--     <init-param> -->
-<!--       <param-name>avoid</param-name> -->
-<!--       <param-value>/loginPage.jsp,/LoginServlet,/RegisterServlet,/registerPage.jsp,/loginError.jsp,/resources/css/photos.css,/resources/images/grass.jpg</param-value> -->
-<!--     </init-param> -->
-<!--   </filter> -->
-<!--   <filter-mapping> -->
-<!--     <filter-name>LoginFilter</filter-name> -->
-<!--     <url-pattern>/*</url-pattern> -->
-<!--   </filter-mapping> -->
 </web-app>
